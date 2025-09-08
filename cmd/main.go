@@ -7,14 +7,16 @@ import (
 
 	"go-adv-demo/configs"
 	"go-adv-demo/internal/auth"
-	"go-adv-demo/internal/hello"
 )
 
 func main() {
 	conf := configs.LoadConfig()
 	router := http.NewServeMux()
-	auth.NewAuthHandler(router, conf)
-	hello.NewHelloHandler(router)
+	auth.NewAuthHandler(
+		router, &auth.AuthHandlerDeps{
+			Config: conf,
+		},
+	)
 
 	server := http.Server{
 		Addr:    ":8080",
