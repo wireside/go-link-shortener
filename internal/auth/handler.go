@@ -2,6 +2,8 @@ package auth
 
 import (
 	"encoding/json"
+	"errors"
+	"io"
 	"net/http"
 
 	"go-adv-demo/configs"
@@ -30,6 +32,11 @@ func (handler *AuthHandler) login() http.HandlerFunc {
 		var payload LoginRequest
 		err := json.NewDecoder(req.Body).Decode(&payload)
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				httputil.BadRequest(w, "Request body is empty, JSON payload is required")
+				return
+			}
+
 			httputil.BadRequest(w, err.Error())
 			return
 		}
