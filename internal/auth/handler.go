@@ -41,11 +41,11 @@ func (handler *AuthHandler) login() http.HandlerFunc {
 			return
 		}
 
-		if len(payload.Email) == 0 {
+		if payload.Email == "" {
 			httputil.BadRequest(w, "Email is required but missing")
 			return
 		}
-		if len(payload.Password) == 0 {
+		if payload.Password == "" {
 			httputil.BadRequest(w, "Password is required but missing")
 			return
 		}
