@@ -12,9 +12,13 @@ func WriteJSON(w http.ResponseWriter, statusCode int, data any) {
 }
 
 func OK(w http.ResponseWriter, data any) {
-	WriteJSON(w, 200, data)
+	WriteJSON(w, http.StatusOK, data)
 }
 
 func Created(w http.ResponseWriter, data any) {
-	WriteJSON(w, 201, data)
+	WriteJSON(w, http.StatusCreated, data)
+}
+
+func BadRequest(w http.ResponseWriter, data any) {
+	WriteJSON(w, http.StatusBadRequest, data)
 }
