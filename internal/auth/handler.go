@@ -1,13 +1,11 @@
 package auth
 
 import (
-	"encoding/json"
-	"errors"
-	"io"
 	"net/http"
 
 	"go-adv-demo/configs"
-	"go-adv-demo/pkg/httputil"
+	"go-adv-demo/pkg/request"
+	"go-adv-demo/pkg/response"
 )
 
 type AuthHandler struct {
@@ -29,24 +27,8 @@ func NewAuthHandler(router *http.ServeMux, deps *AuthHandlerDeps) {
 
 func (handler *AuthHandler) login() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		var payload LoginRequest
-		err := json.NewDecoder(req.Body).Decode(&payload)
+		_, err := request.HandleBody[LoginRequest](w, req)
 		if err != nil {
-			if errors.Is(err, io.EOF) {
-				httputil.BadRequest(w, "Request body is empty, JSON payload is required")
-				return
-			}
-
-			httputil.BadRequest(w, err.Error())
-			return
-		}
-
-		if payload.Email == "" {
-			httputil.BadRequest(w, "Email is required but missing")
-			return
-		}
-		if payload.Password == "" {
-			httputil.BadRequest(w, "Password is required but missing")
 			return
 		}
 
@@ -54,12 +36,23 @@ func (handler *AuthHandler) login() http.HandlerFunc {
 			Token: "123",
 		}
 
-		httputil.OK(w, res)
+		response.OK(w, res)
 	}
 }
 
 func (handler *AuthHandler) register() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		body, err := request.HandleBody[RegisterRequest](w, req)
+		if err != nil {
+			return
+		}
 
+		res := RegisterResponse{
+			Name:  body.Name,
+			Email: body.Email,
+			Token: "123",
+		}
+
+		response.OK(w, res)
 	}
 }

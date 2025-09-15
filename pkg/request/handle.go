@@ -1,0 +1,30 @@
+package request
+
+import (
+	"errors"
+	"io"
+	"net/http"
+
+	"go-adv-demo/pkg/response"
+)
+
+func HandleBody[T any](w http.ResponseWriter, req *http.Request) (*T, error) {
+	body, err := Decode[T](req.Body)
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			response.BadRequest(w, "Request body is empty, JSON payload is required")
+			return nil, err
+		}
+
+		response.BadRequest(w, err.Error())
+		return nil, err
+	}
+
+	err = Validate[*T](body)
+	if err != nil {
+		response.BadRequest(w, err.Error())
+		return nil, err
+	}
+
+	return body, nil
+}
