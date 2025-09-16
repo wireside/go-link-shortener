@@ -1,4 +1,16 @@
+# Jetbrains IDE's project data
 /.idea
 .idea
 
+# VSCode
+.vscode
+*.code-workspace
+.history/
+
+# Environment variables
 .env
+
+# Database data
+/postgres_data
+/postgres-data
+/pgdata
