@@ -7,10 +7,13 @@ import (
 
 	"go-adv-demo/configs"
 	"go-adv-demo/internal/auth"
+	"go-adv-demo/pkg/db"
 )
 
 func main() {
 	conf := configs.LoadConfig()
+	_ = db.NewDb(conf)
+
 	router := http.NewServeMux()
 	auth.NewAuthHandler(
 		router, &auth.AuthHandlerDeps{
