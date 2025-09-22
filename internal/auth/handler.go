@@ -16,13 +16,15 @@ type AuthHandlerDeps struct {
 	Config *configs.Config
 }
 
-func NewAuthHandler(router *http.ServeMux, deps *AuthHandlerDeps) {
+func NewAuthHandler(router *http.ServeMux, deps *AuthHandlerDeps) *AuthHandler {
 	handler := &AuthHandler{
 		deps,
 	}
 
 	router.HandleFunc("POST /auth/login", handler.login())
 	router.HandleFunc("POST /auth/register", handler.register())
+
+	return handler
 }
 
 func (handler *AuthHandler) login() http.HandlerFunc {
