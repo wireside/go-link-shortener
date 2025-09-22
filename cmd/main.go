@@ -21,12 +21,13 @@ func main() {
 		},
 	)
 
+	port := 8080
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    fmt.Sprintf(":%d", port),
 		Handler: router,
 	}
 
-	fmt.Printf("Server is listening on port %d\n", 8080)
+	fmt.Printf("Server is listening on port %d\n", port)
 	err := server.ListenAndServe()
 	if err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
