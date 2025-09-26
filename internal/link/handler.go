@@ -2,6 +2,9 @@ package link
 
 import (
 	"net/http"
+
+	"go-adv-demo/pkg/request"
+	"go-adv-demo/pkg/response"
 )
 
 type LinkHandler struct {
@@ -23,7 +26,19 @@ func NewLinkHandler(router *http.ServeMux, linkRepository *LinkRepository) *Link
 
 func (handler *LinkHandler) create() http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		body, err := request.HandleBody[LinkCreateRequest](w, req)
+		if err != nil {
+			return
+		}
 
+		link := NewLink(body.Url)
+		createdLink, err := handler.linkRepository.Create(link)
+		if err != nil {
+			response.InternalServerError(w, err.Error())
+			return
+		}
+
+		response.Created(w, createdLink)
 	}
 }
 
