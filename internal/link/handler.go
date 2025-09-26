@@ -20,7 +20,7 @@ func NewLinkHandler(router *http.ServeMux, deps *LinkHandlerDeps) *LinkHandler {
 	}
 
 	router.HandleFunc("POST /link", handler.create())
-	router.HandleFunc("GET /{alias}", handler.goTo())
+	router.HandleFunc("GET /{hash}", handler.goTo())
 	router.HandleFunc("PATCH /link/{id}", handler.update())
 	router.HandleFunc("DELETE /link/{id}", handler.delete())
 
