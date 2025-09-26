@@ -15,18 +15,16 @@ func main() {
 	router := http.NewServeMux()
 
 	conf := configs.LoadConfig()
-	_ = db.NewDb(conf)
+	database := db.NewDb(conf)
+
+	// Repositories
+	linkRepo := link.NewLinkRepository(database)
 
 	// Handlers
-	auth.NewAuthHandler(
-		router, &auth.AuthHandlerDeps{
-			Config: conf,
-		},
-	)
+	auth.NewAuthHandler(router)
 	link.NewLinkHandler(
-		router, &link.LinkHandlerDeps{
-			Config: conf,
-		},
+		router,
+		linkRepo,
 	)
 
 	port := 8080
