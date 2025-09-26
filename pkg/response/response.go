@@ -22,3 +22,7 @@ func Created(w http.ResponseWriter, data any) {
 func BadRequest(w http.ResponseWriter, data any) {
 	WriteJSON(w, http.StatusBadRequest, data)
 }
+
+func InternalServerError(w http.ResponseWriter, data any) {
+	WriteJSON(w, http.StatusInternalServerError, data)
+}
