@@ -2,21 +2,15 @@ package link
 
 import (
 	"net/http"
-
-	"go-adv-demo/configs"
 )
 
 type LinkHandler struct {
-	*LinkHandlerDeps
+	linkRepository *LinkRepository
 }
 
-type LinkHandlerDeps struct {
-	Config *configs.Config
-}
-
-func NewLinkHandler(router *http.ServeMux, deps *LinkHandlerDeps) *LinkHandler {
+func NewLinkHandler(router *http.ServeMux, linkRepository *LinkRepository) *LinkHandler {
 	handler := &LinkHandler{
-		deps,
+		linkRepository,
 	}
 
 	router.HandleFunc("POST /link", handler.create())

@@ -3,23 +3,15 @@ package auth
 import (
 	"net/http"
 
-	"go-adv-demo/configs"
 	"go-adv-demo/pkg/request"
 	"go-adv-demo/pkg/response"
 )
 
 type AuthHandler struct {
-	*AuthHandlerDeps
 }
 
-type AuthHandlerDeps struct {
-	Config *configs.Config
-}
-
-func NewAuthHandler(router *http.ServeMux, deps *AuthHandlerDeps) *AuthHandler {
-	handler := &AuthHandler{
-		deps,
-	}
+func NewAuthHandler(router *http.ServeMux) *AuthHandler {
+	handler := &AuthHandler{}
 
 	router.HandleFunc("POST /auth/login", handler.login())
 	router.HandleFunc("POST /auth/register", handler.register())
