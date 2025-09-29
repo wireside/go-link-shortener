@@ -2,6 +2,8 @@ package link
 
 import (
 	"go-adv-demo/pkg/db"
+
+	"gorm.io/gorm/clause"
 )
 
 type LinkRepository struct {
@@ -14,7 +16,7 @@ func NewLinkRepository(database *db.Db) *LinkRepository {
 	}
 }
 
-func (repo LinkRepository) Create(link *Link) (*Link, error) {
+func (repo *LinkRepository) Create(link *Link) (*Link, error) {
 	result := repo.database.Create(link)
 	if result.Error != nil {
 		return nil, result.Error
@@ -23,7 +25,7 @@ func (repo LinkRepository) Create(link *Link) (*Link, error) {
 	return link, nil
 }
 
-func (repo LinkRepository) GetByHash(hash string) (*Link, error) {
+func (repo *LinkRepository) GetByHash(hash string) (*Link, error) {
 	var link Link
 	result := repo.database.First(&link, "hash = ?", hash)
 	if result.Error != nil {
@@ -31,4 +33,13 @@ func (repo LinkRepository) GetByHash(hash string) (*Link, error) {
 	}
 
 	return &link, nil
+}
+
+func (repo *LinkRepository) Update(link *Link) (*Link, error) {
+	result := repo.database.Clauses(clause.Returning{}).Updates(link)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return link, nil
 }

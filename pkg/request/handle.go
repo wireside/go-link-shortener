@@ -8,8 +8,8 @@ import (
 	"go-adv-demo/pkg/response"
 )
 
-func HandleBody[T any](w http.ResponseWriter, req *http.Request) (*T, error) {
-	body, err := Decode[T](req.Body)
+func HandleBody[T any](w http.ResponseWriter, r *http.Request) (*T, error) {
+	body, err := Decode[T](r.Body)
 	if err != nil {
 		if errors.Is(err, io.EOF) {
 			response.BadRequest(w, "request body is empty, JSON payload is required")

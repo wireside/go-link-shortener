@@ -2,9 +2,12 @@ package link
 
 import (
 	"net/http"
+	"strconv"
 
 	"go-adv-demo/pkg/request"
 	"go-adv-demo/pkg/response"
+
+	"gorm.io/gorm"
 )
 
 type LinkHandler struct {
@@ -67,7 +70,30 @@ func (handler *LinkHandler) goTo() http.HandlerFunc {
 
 func (handler *LinkHandler) update() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := request.HandleBody[LinkUpdateRequest](w, r)
+		if err != nil {
+			return
+		}
+		idString := r.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			response.BadRequest(w, err.Error())
+			return
+		}
 
+		link, err := handler.linkRepository.Update(
+			&Link{
+				Model: gorm.Model{ID: uint(id)},
+				Url:   body.Url,
+				Hash:  body.Hash,
+			},
+		)
+		if err != nil {
+			response.BadRequest(w, err.Error())
+			return
+		}
+
+		response.OK(w, link)
 	}
 }
 
