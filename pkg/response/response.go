@@ -23,6 +23,10 @@ func BadRequest(w http.ResponseWriter, data any) {
 	WriteJSON(w, http.StatusBadRequest, data)
 }
 
+func NotFound(w http.ResponseWriter, data any) {
+	WriteJSON(w, http.StatusNotFound, data)
+}
+
 func InternalServerError(w http.ResponseWriter, data any) {
 	WriteJSON(w, http.StatusInternalServerError, data)
 }

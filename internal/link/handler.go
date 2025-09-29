@@ -25,8 +25,8 @@ func NewLinkHandler(router *http.ServeMux, linkRepository *LinkRepository) *Link
 }
 
 func (handler *LinkHandler) create() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
-		body, err := request.HandleBody[LinkCreateRequest](w, req)
+	return func(w http.ResponseWriter, r *http.Request) {
+		body, err := request.HandleBody[LinkCreateRequest](w, r)
 		if err != nil {
 			return
 		}
@@ -43,19 +43,27 @@ func (handler *LinkHandler) create() http.HandlerFunc {
 }
 
 func (handler *LinkHandler) goTo() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		hash := r.PathValue("hash")
 
+		link, err := handler.linkRepository.GetByHash(hash)
+		if err != nil {
+			response.NotFound(w, err)
+			return
+		}
+
+		http.Redirect(w, r, link.Url, http.StatusTemporaryRedirect)
 	}
 }
 
 func (handler *LinkHandler) update() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
 
 func (handler *LinkHandler) delete() http.HandlerFunc {
-	return func(w http.ResponseWriter, req *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 
 	}
 }
