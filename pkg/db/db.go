@@ -7,6 +7,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type Db struct {
@@ -18,7 +19,11 @@ func NewDb(conf *configs.Config) *Db {
 		log.Fatalln("failed to read DSN: DSN is not provided in ENV")
 	}
 
-	db, err := gorm.Open(postgres.Open(conf.Db.Dsn))
+	db, err := gorm.Open(
+		postgres.Open(conf.Db.Dsn), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Silent),
+		},
+	)
 	if err != nil {
 		panic(err)
 	}
