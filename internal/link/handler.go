@@ -6,8 +6,6 @@ import (
 
 	"go-adv-demo/pkg/request"
 	"go-adv-demo/pkg/response"
-
-	"gorm.io/gorm"
 )
 
 type LinkHandler struct {
@@ -60,7 +58,7 @@ func (handler *LinkHandler) goTo() http.HandlerFunc {
 
 		link, err := handler.linkRepository.GetByHash(hash)
 		if err != nil {
-			response.NotFound(w, err)
+			response.NotFound(w, err.Error())
 			return
 		}
 
@@ -81,13 +79,16 @@ func (handler *LinkHandler) update() http.HandlerFunc {
 			return
 		}
 
-		link, err := handler.linkRepository.Update(
-			&Link{
-				Model: gorm.Model{ID: uint(id)},
-				Url:   body.Url,
-				Hash:  body.Hash,
-			},
-		)
+		existedLink, err := handler.linkRepository.GetByID(uint(id))
+		if err != nil {
+			response.NotFound(w, err.Error())
+			return
+		}
+
+		existedLink.Url = body.Url
+		existedLink.Hash = body.Hash
+
+		link, err := handler.linkRepository.Update(existedLink)
 		if err != nil {
 			response.BadRequest(w, err.Error())
 			return
@@ -99,6 +100,25 @@ func (handler *LinkHandler) update() http.HandlerFunc {
 
 func (handler *LinkHandler) delete() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		idString := r.PathValue("id")
+		id, err := strconv.ParseUint(idString, 10, 32)
+		if err != nil {
+			response.BadRequest(w, err.Error())
+			return
+		}
 
+		existedLink, err := handler.linkRepository.GetByID(uint(id))
+		if err != nil {
+			response.NotFound(w, err.Error())
+			return
+		}
+
+		err = handler.linkRepository.Delete(existedLink.ID)
+		if err != nil {
+			response.InternalServerError(w, err.Error())
+			return
+		}
+
+		response.OK(w, nil)
 	}
 }
