@@ -9,6 +9,7 @@ import (
 	"go-adv-demo/internal/auth"
 	"go-adv-demo/internal/link"
 	"go-adv-demo/pkg/db"
+	"go-adv-demo/pkg/middleware"
 )
 
 func main() {
@@ -27,10 +28,16 @@ func main() {
 		linkRepo,
 	)
 
+	// Middlewares
+	corsMiddleware := func(next http.Handler) http.Handler {
+		return middleware.CORS(next, conf.Cors.AllowedOrigins, conf.Cors.AllowCredentials)
+	}
+	stack := middleware.Chain(corsMiddleware, middleware.Logging)
+
 	port := 8080
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: router,
+		Handler: stack(router),
 	}
 
 	fmt.Printf("Server is listening on port %d\n", port)

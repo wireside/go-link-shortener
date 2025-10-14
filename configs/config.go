@@ -3,6 +3,7 @@ package configs
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -10,6 +11,7 @@ import (
 type Config struct {
 	Db   DbConfig
 	Auth AuthConfig
+	Cors CorsConfig
 }
 
 type DbConfig struct {
@@ -18,6 +20,11 @@ type DbConfig struct {
 
 type AuthConfig struct {
 	Secret string
+}
+
+type CorsConfig struct {
+	AllowedOrigins   string
+	AllowCredentials bool
 }
 
 func LoadConfig() *Config {
@@ -31,6 +38,13 @@ func LoadConfig() *Config {
 		},
 		Auth: AuthConfig{
 			Secret: os.Getenv("TOKEN"),
+		},
+		Cors: CorsConfig{
+			AllowedOrigins: os.Getenv("CORS_ALLOWED_ORIGINS"),
+			AllowCredentials: strings.Contains(
+				"true,yes,1",
+				strings.ToLower(os.Getenv("CORS_ALLOW_CREDENTIALS")),
+			),
 		},
 	}
 }
