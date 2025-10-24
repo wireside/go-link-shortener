@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"go-adv-demo/configs"
 	"go-adv-demo/internal/auth"
+	"go-adv-demo/internal/config"
 	"go-adv-demo/internal/link"
 	"go-adv-demo/pkg/db"
 	"go-adv-demo/pkg/middleware"
@@ -15,7 +15,7 @@ import (
 func main() {
 	router := http.NewServeMux()
 
-	conf := configs.LoadConfig()
+	conf := config.LoadConfig()
 	database := db.NewDb(conf)
 
 	// Repositories
@@ -32,7 +32,10 @@ func main() {
 	corsMiddleware := func(next http.Handler) http.Handler {
 		return middleware.CORS(next, conf.Cors.AllowedOrigins, conf.Cors.AllowCredentials)
 	}
-	stack := middleware.Chain(corsMiddleware, middleware.Logging)
+	stack := middleware.Chain(
+		corsMiddleware,
+		middleware.Logging,
+	)
 
 	port := 8080
 	server := http.Server{

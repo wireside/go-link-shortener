@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"go-adv-demo/pkg/middleware"
+	"go-adv-demo/internal/auth"
 	"go-adv-demo/pkg/request"
 	"go-adv-demo/pkg/response"
 )
@@ -19,8 +19,8 @@ func NewLinkHandler(router *http.ServeMux, linkRepository *LinkRepository) *Link
 	}
 
 	router.Handle("POST /link", handler.create())
-	router.Handle("GET /{hash}", middleware.IsAuthed(handler.goTo()))
-	router.Handle("PATCH /link/{id}", handler.update())
+	router.Handle("GET /{hash}", handler.goTo())
+	router.Handle("PATCH /link/{id}", auth.IsAuthed(handler.update()))
 	router.Handle("DELETE /link/{id}", handler.delete())
 
 	return handler
